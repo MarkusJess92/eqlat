@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "eqlat"
+dynamic = ["version"]
+description = "Equivalent latitude from potential vorticity: piecewise-constant and ROI (Añel et al., 2013) methods"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Markus Jesswein" }]
+keywords = ["equivalent latitude", "potential vorticity", "stratosphere", "reanalysis"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+]
+# Core algorithms (piecewise, ROI, utils, interpolation) need only these.
+dependencies = [
+    "numpy>=1.23",
+    "contourpy>=1.0",
+]
+
+[project.optional-dependencies]
+# NetCDF batch processing and pipeline scripts
+io = [
+    "xarray>=2023.1",
+    "netCDF4",
+    "h5netcdf",
+    "dask",
+    "tqdm",
+]
+download = [
+    "xarray>=2023.1",
+    "pandas>=1.5",
+    "cdsapi",
+    "requests",
+    "beautifulsoup4",
+    "earthaccess",
+]
+all = ["eqlat[io,download]"]
+dev = ["eqlat[io]", "pytest"]
+
+[project.scripts]
+eqlat-process-fields = "eqlat.calc.process_fields:main"
+eqlat-merge-reanalysis = "eqlat.calc.merge_reanalysis:main"
+eqlat-download-era5 = "eqlat.download.download_ERA_5:main"
+eqlat-download-merra2 = "eqlat.download.download_MERRA_2_new:main"
+eqlat-download-mls = "eqlat.download.download_mls:main"
+eqlat-download-ozonesondes = "eqlat.download.download_ozonesondes:main"
+
+[tool.hatch.version]
+path = "src/eqlat/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/eqlat"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
